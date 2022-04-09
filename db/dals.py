@@ -20,7 +20,7 @@ class LinkDAL():
 
         #Let check if records exists first
         results = await self.db_session.execute(select(LinkModel).where(LinkModel.url == str(url)))
-        old_link = results.scalar_one()
+        old_link = results.scalar_one_or_none()
         if old_link is not None:
             return old_link
         # no existing records -> generating new slug and record
