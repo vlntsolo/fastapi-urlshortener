@@ -1,27 +1,24 @@
-from typing import List, Optional
+from fastapi.responses import RedirectResponse
+from fastapi import APIRouter, Depends, Header
+from db.schemas import (
+    LinkRequestSchema, 
+)
+from db.dals import LinkDAL
+from typing import Optional
+from dependencies import get_link_dal
+from helpers import format_short_url
 
-from fastapi import APIRouter, Depends
-
-from db.dals import BookDAL
-from db.models import Book
-from dependencies import get_book_dal
 router = APIRouter()
 
+@router.post('/api/new')
+async def create_short(item: LinkRequestSchema, Authorization: Optional[str] = Header(None), link_dal: LinkDAL = Depends(get_link_dal)):
+    print("Authorization", Authorization)
+    data = await link_dal.create_slug(item.url)
+    short_url = format_short_url(data.slug)
+    return {"short": short_url}
 
-@router.post("/books")
-async def create_book(name: str, author: str, release_year: int, book_dal: BookDAL = Depends(get_book_dal)):
-    return await book_dal.create_book(name, author, release_year)
 
-
-@router.get("/books")
-async def get_all_books(book_dal: BookDAL = Depends(get_book_dal)) -> List[Book]:
-    return await book_dal.get_all_books()
-
-        
-@router.put("/books/{book_id}")
-async def update_book(
-    book_id: int, name: Optional[str] = None, 
-    author: Optional[str] = None, release_year: Optional[int] = None, 
-    book_dal: BookDAL = Depends(get_book_dal)):
-    return await book_dal.update_book(book_id, name, author, release_year)
-
+@router.get('/{slug}')
+async def proccess_redirect(slug: str, link_dal: LinkDAL = Depends(get_link_dal)):
+    data = await link_dal.get_url(slug)
+    return RedirectResponse(url=data.url)

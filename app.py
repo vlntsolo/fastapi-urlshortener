@@ -1,14 +1,10 @@
 import uvicorn
 from fastapi import FastAPI
-from db.config import engine, Base, async_session
-from db.dals import BookDAL
-from db.models import Book
-from typing import List, Optional
 from routes import router
+from config import settings
 
 app = FastAPI()
 app.include_router(router)
-
 
 if __name__ == '__main__':
     uvicorn.run("app:app", port=8001, host='127.0.0.1')
@@ -23,4 +19,6 @@ if __name__ == '__main__':
 
 @app.get("/")
 async def hello_world():
-    return "hello_world"
+    return "PONG"
+
+

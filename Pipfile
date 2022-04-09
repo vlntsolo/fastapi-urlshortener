@@ -11,6 +11,8 @@ aiosqlite = "*"
 alembic = "*"
 asyncpg = "*"
 python-dotenv = "*"
+pydentic = "*"
+pydantic = "*"
 
 [dev-packages]
 

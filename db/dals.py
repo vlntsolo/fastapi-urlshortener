@@ -1,34 +1,69 @@
+from asyncio.log import logger
 from typing import List, Optional
 
 from sqlalchemy import update
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
-from db.models import Book
+from db.models import LinkModel
+from helpers import generate_slug
 
 
 
-class BookDAL():
+class LinkDAL():
+    """Shortlink model data access layer"""
     
     def __init__(self, db_session: Session):
         self.db_session = db_session
 
-    async def create_book(self, name: str, author: str,   release_year: int):
-        new_book = Book(name=name,author=author, release_year=release_year)
-        self.db_session.add(new_book)
+    async def create_slug(self, url: str):
+
+        #Let check if records exists first
+        results = await self.db_session.execute(select(LinkModel).where(LinkModel.url == str(url)))
+        old_link = results.scalar_one()
+        if old_link is not None:
+            return old_link
+        # no existing records -> generating new slug and record
+        slug = generate_slug()
+        new_link = LinkModel(url=url,slug=slug)
+        self.db_session.add(new_link)
         await self.db_session.flush()
+        return new_link
 
-    async def get_all_books(self) -> List[Book]:
-        q = await self.db_session.execute(select(Book).order_by(Book.id))
-        return q.scalars().all()
 
-    async def update_book(self, book_id: int, name: Optional[str], author: Optional[str], release_year: Optional[int]):
-        q = update(Book).where(Book.id == book_id)
-        if name:
-            q = q.values(name=name)
-        if author:
-            q = q.values(author=author)
-        if release_year:
-            q = q.values(release_year=release_year)
-        q.execution_options(synchronize_session="fetch")
-        await  self.db_session.execute(q)
+    async def get_url(self, slug: str):
+
+        results = await self.db_session.execute(select(LinkModel).where(LinkModel.slug == str(slug)))
+        shortlink = results.scalar_one()
+        return shortlink
+
+
+
+
+
+
+
+# class BookDAL():
+    
+#     def __init__(self, db_session: Session):
+#         self.db_session = db_session
+
+#     async def create_book(self, name: str, author: str,   release_year: int):
+#         new_book = Book(name=name,author=author, release_year=release_year)
+#         self.db_session.add(new_book)
+#         await self.db_session.flush()
+
+#     async def get_all_books(self) -> List[Book]:
+#         q = await self.db_session.execute(select(Book).order_by(Book.id))
+#         return q.scalars().all()
+
+#     async def update_book(self, book_id: int, name: Optional[str], author: Optional[str], release_year: Optional[int]):
+#         q = update(Book).where(Book.id == book_id)
+#         if name:
+#             q = q.values(name=name)
+#         if author:
+#             q = q.values(author=author)
+#         if release_year:
+#             q = q.values(release_year=release_year)
+#         q.execution_options(synchronize_session="fetch")
+#         await  self.db_session.execute(q)

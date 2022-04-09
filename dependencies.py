@@ -1,8 +1,8 @@
 from db.config import async_session
-from db.dals import BookDAL
+from db.dals import LinkDAL
 
 
-async def get_book_dal():
+async def get_link_dal():
     async with async_session() as session:
         async with session.begin():
-            yield BookDAL(session)
+            yield LinkDAL(session)
