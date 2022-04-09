@@ -1,18 +1,19 @@
 from fastapi.responses import RedirectResponse
-from fastapi import APIRouter, Depends, Header
+from fastapi import APIRouter, Response, Depends, Header
 from db.schemas import (
     LinkRequestSchema, 
 )
 from db.dals import LinkDAL
 from typing import Optional
 from dependencies import get_link_dal
-from helpers import format_short_url
+from helpers import format_short_url, validate_secret
 
 router = APIRouter()
 
 @router.post('/api/new')
 async def create_short(item: LinkRequestSchema, Authorization: Optional[str] = Header(None), link_dal: LinkDAL = Depends(get_link_dal)):
-    print("Authorization", Authorization)
+    if not validate_secret(Authorization):
+        return Response(status_code=403)
     data = await link_dal.create_slug(item.url)
     short_url = format_short_url(data.slug)
     return {"short": short_url}
