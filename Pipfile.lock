@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "be96c09a84aff6e7057409695be7acb5f3b467bdfd5e4b52344ba8224cd59564"
+            "sha256": "afe5ed517209c16e7d3e0476bab0d1bf4d86b8583d7605ed3f7973a0fab23275"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,14 +16,6 @@
         ]
     },
     "default": {
-        "aiosqlite": {
-            "hashes": [
-                "sha256:6c49dc6d3405929b1d08eeccc72306d3677503cc5e5e43771efc1e00232e8231",
-                "sha256:f0e6acc24bc4864149267ac82fb46dfb3be4455f99fe21df82609cc6e6baee51"
-            ],
-            "index": "pypi",
-            "version": "==0.17.0"
-        },
         "alembic": {
             "hashes": [
                 "sha256:29be0856ec7591c39f4e1cb10f198045d890e6e2274cf8da80cb5e721a09642b",
@@ -304,7 +296,7 @@
                 "sha256:f5a64b64ddf4c99fe201ac2724daada8595ada0d102ab96d019c1555c2d6441d",
                 "sha256:f947352c3434e8b937e3aa8f96f47bdfe6d92779e44bb3f41e4c213ba6a32145"
             ],
-            "markers": "python_full_version >= '3.6.1'",
+            "index": "pypi",
             "version": "==1.9.0"
         },
         "python-dotenv": {
